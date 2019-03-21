@@ -1,9 +1,17 @@
 #include <avr/io.h>
 
-#define OBS_FREN 0b00110000
-#define OBS_DIRE 0b00001100
-#define OBS_ESQU 0b00011000   
-#define OBS_TRAS 0b00100100
+//Códigos dos obstáculos
+#define OBS_FREN_CODE 0b00110000
+#define OBS_DIRE_CODE 0b00001100
+#define OBS_ESQU_CODE 0b00011000   
+#define OBS_TRAS_CODE 0b00100100
+
+//Códigos de comando
+#define PAR 0b00000000
+#define TRAS 0b00010000
+#define ESQU 0b01000000
+#define DIRE 0b00100000
+#define FREN 0b00001000
 
 int main(){
   //Computa os obstáculos
@@ -14,22 +22,40 @@ int main(){
 
   PORTB |= 0b00111100;
   PORTC &= 0b00000000;
+
+  //auxiliares
+  bool OBS_FREN = false;
+  bool OBS_DIRE = false;
+  bool OBS_ESQU = false;   
+  bool OBS_TRAS = false;
+
   while(1){
-    //0b0 0000 000 ->parar (obst.: frente e dir e esq e tras = 0b00000000)
-    //0b0 0001 000 -> andar pra frente (obst: nenhum ou tras ou dir ou esq = 0b00111100) 
-    //0b0 0100 000 -> andar pra direita (obst: frente)
-    //0b0 0010 000 -> andar pra trás (obst: frente e dir e esq = 0b00011100)
-    //0b0 1000 000 -> andar pra esquerda (obst.: (frente e dir) ou atras)
-    if(PINB == (OBS_FREN & OBS_DIRE & OBS_ESQU & OBS_TRAS)){ //PARAR
-      PORTC = 0b00000000;
-    }else if(PINB == (OBS_FREN & OBS_DIRE & OBS_ESQU)){ //ANDAR PARA TRAS
-      PORTC = 0b00010000;
-    }else if(PINB == ((OBS_FREN & OBS_DIRE) | OBS_TRAS)){ //ANDAR PARA A ESQUERDA
-      PORTC = 0b01000000;
-    }else if(PINB == OBS_FREN){ //ANDAR PARA A DIREITA
-      PORTC = 0b00100000;
+    for(int i=0; i<4; i++){
+      switch (PINB)
+      {
+        case OBS_FREN_CODE:
+          OBS_FREN = true;
+        case OBS_DIRE_CODE:
+          OBS_DIRE = true;
+        case OBS_ESQU_CODE:
+          OBS_ESQU = true;
+        case OBS_TRAS_CODE:
+          OBS_TRAS = true;
+        default:
+          break;
+      }
+    }
+
+    if(OBS_FREN & OBS_DIRE & OBS_ESQU & OBS_TRAS){ 
+      PORTC = PAR;
+    }else if(OBS_FREN & OBS_DIRE & OBS_ESQU){ 
+      PORTC = TRAS;
+    }else if((OBS_FREN & OBS_DIRE) | OBS_TRAS){ 
+      PORTC = ESQU;
+    }else if(OBS_FREN){
+      PORTC = DIRE;
     }else{
-      PORTC = 0b00001000;  //ANDAR PARA FRENTE
+      PORTC = FREN;
     }
   }
 }
