@@ -30,6 +30,11 @@ int main(){
   bool OBS_TRAS = false;
 
   while(1){
+    OBS_FREN = false;
+    OBS_DIRE = false;
+    OBS_ESQU = false;   
+    OBS_TRAS = false;
+    
     for(int i=0; i<4; i++){
       switch (PINB)
       {
