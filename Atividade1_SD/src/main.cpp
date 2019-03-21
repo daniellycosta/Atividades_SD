@@ -34,18 +34,22 @@ int main(){
     OBS_DIRE = false;
     OBS_ESQU = false;   
     OBS_TRAS = false;
-    
+
     for(int i=0; i<4; i++){
       switch (PINB)
       {
         case OBS_FREN_CODE:
           OBS_FREN = true;
+          break;
         case OBS_DIRE_CODE:
           OBS_DIRE = true;
+          break;
         case OBS_ESQU_CODE:
           OBS_ESQU = true;
+          break;
         case OBS_TRAS_CODE:
           OBS_TRAS = true;
+          break;
         default:
           break;
       }
